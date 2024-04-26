@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Envíos</title>
+</head>
+<body>
+    <h1>proximo Envio</h1>
+    <form id="envioForm">
+        <label for="nombreCliente">Nombre del Cliente:</label>
+        <input type="text" id="nombreCliente" required><br><br>
+        
+        <label for="fechaRecepcion">Fecha de Recepción:</label>
+        <input type="date" id="fechaRecepcion" required><br><br>
+        
+        <label for="costeEnvio">Coste del Envío:</label>
+        <input type="number" id="costeEnvio" step="0.01" required><br><br>
+        
+        <button type="submit">Agregar Envío</button>
+    </form>
+
+    <div id="enviosList">
+        <h2>Lista de envios :</h2>
+        <table id="enviosTable">
+            <thead>
+                <tr>
+                    <th>Nombre del Cliente</th>
+                    <th>Fecha de Recepción</th>
+                    <th>Coste del Envío</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="enviosBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let envios = [];
+
+        document.getElementById('envioForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nombreCliente = document.getElementById('nombreCliente').value.trim();
+            const fechaRecepcion = document.getElementById('fechaRecepcion').value;
+            const costeEnvio = parseFloat(document.getElementById('costeEnvio').value);
+
+            if (!nombreCliente || !fechaRecepcion || isNaN(costeEnvio)) {
+                alert("Por favor, complete todos los campos correctamente.");
+                return;
+            }
+
+            const nuevoEnvio = {
+                nombreCliente: nombreCliente,
+                fechaRecepcion: fechaRecepcion,
+                costeEnvio: costeEnvio
+            };
+
+            envios.push(nuevoEnvio);
+            actualizarTablaEnvios();
+        });
+
+        function actualizarTablaEnvios() {
+            const tablaEnviosBody = document.getElementById('enviosBody');
+            tablaEnviosBody.innerHTML = '';
+
+            envios.forEach((envio, index) => {
+                const row = document.createElement('tr');
+                const cellNombre = document.createElement('td');
+                cellNombre.textContent = envio.nombreCliente;
+                row.appendChild(cellNombre);
+
+                const cellFecha = document.createElement('td');
+                cellFecha.textContent = envio.fechaRecepcion;
+                row.appendChild(cellFecha);
+
+                const cellCoste = document.createElement('td');
+                cellCoste.textContent = `$${envio.costeEnvio}`;
+                row.appendChild(cellCoste);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Eliminar';
+                deleteButton.addEventListener('click', () => {
+                    envios.splice(index, 1);
+                    actualizarTablaEnvios();
+                });
+
+                const cellEliminar = document.createElement('td');
+                cellEliminar.appendChild(deleteButton);
+                row.appendChild(cellEliminar);
+
+                tablaEnviosBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
